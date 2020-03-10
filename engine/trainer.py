@@ -55,7 +55,8 @@ class Trainer(object):
             processed += len(data)
 
             pbar.set_description(
-                desc=f'epoch={epoch-1+batch_idx/len(pbar):.2f} | loss={train_loss/(batch_idx+1):.10f} | accuracy={100.*correct/total:.2f} {correct}/{total} | batch_id={batch_idx}')
+                desc=f'batch_id : {batch_idx} | accuracy : {100.*correct/total:.2f} ({correct}/{total}) | loss : {train_loss/(batch_idx+1):.5f}')
+                # epoch={epoch-1+batch_idx/len(pbar):.2f} 
 
             accuracy_history.append(100.*correct/processed)
             loss_history.append(loss.data.cpu().numpy().item())
@@ -90,7 +91,7 @@ class Trainer(object):
                 #     desc=f'epoch={epoch+batch_idx/len(pbar):.2f} | loss={test_loss/(batch_idx+1):.10f} | accuracy={100.*correct/total:.2f} {correct}/{total} | batch_id={batch_idx}')
 
         print(
-            f'Test Set: Average Loss: {test_loss/len(self.test_loader):.8f}, Accuracy: {100. * correct / total:.2f} ({correct}/{total})')
+            f'Test Set: Accuracy: {100. * correct / total:.2f} ({correct}/{total}) | Average Loss: {test_loss/len(self.test_loader):.5f}')
 
         loss_history.append(test_loss/len(self.test_loader))
         accuracy_history.append((100. * correct) / total)

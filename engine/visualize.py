@@ -101,7 +101,6 @@ class Classified(object):
         misclassified_images, ground_truth, predicted = self.get_misclassified(number)
         cols = 4
         rows = (number//cols) + (number % cols)
-
         fig = plt.figure()
         fig.set_figheight(rows*3)
         fig.set_figwidth(cols*3)
@@ -116,7 +115,7 @@ class Classified(object):
             # transposing as the channels are first here and plt expects them to be last
             img = misclassified_images[i, :, :,:]
             if unorm:
-                img = unorm(misclassified_images[i, :, :,:])*255.
+                img = unorm(misclassified_images[i, :, :,:])*155.
             else:
                 raise ValueError('Provide Mean and Standard Deviation for displaying correct image')
             img = np.transpose(img.numpy(), (1, 2, 0))
@@ -132,7 +131,7 @@ class Classified(object):
         class_correct = list(0. for i in range(10))
         class_total = list(0. for i in range(10))
         with torch.no_grad():
-            for images, labels in self.test_loader:
+            for images, labels in self.data_loader:
                 images, labels = images.to(self.device), labels.to(self.device)
                 outputs = self.model(images)
                 _, predicted = torch.max(outputs, 1)
