@@ -13,14 +13,14 @@ class Learner(object):
         self.test_loader = test_loader
         self.trainer = Trainer(model, train_loader, test_loader, loss_fn, optimizer)
 
-    def show_images(self):
-        ShowData.random_images(self.train_loader, num=10)
+    def show_images(self,num=5):
+        ShowData.random_images(self.train_loader, num=num)
 
     def run_epochs(self, epochs):
         self.trainer.run(epochs)
 
-    def plot_histoty(self):
-        display_history(self.trainer.get_train_history, self.trainer.get_test_history)
+    def plot_history(self):
+        display_history(self.trainer.get_train_history(), self.trainer.get_test_history())
 
     def plot_misclassified(self):
         classified = Classified(self.model, self.test_loader)

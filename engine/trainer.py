@@ -12,14 +12,12 @@ class Trainer(object):
         self.train_loader = train_loader
         self.test_loader = test_loader
         self.criterion = loss_fn
-        self.optimzier = optimizer
+        self.optimizer = optimizer
         self.train_accuracy = []
         self.train_loss = []
         self.test_accuracy = []
         self.test_loss = []
-    
     def _train_epoch(self, epoch):
-
         loss_history = []
         accuracy_history = []
 
@@ -103,11 +101,11 @@ class Trainer(object):
         for epoch in range(1, epochs+1):
             print(f'\nEpoch: {epoch}')
             train_epoch_history = self._train_epoch(epoch)  # train this epoch
+            test_epoch_history = self._test_epoch(epoch)  # test this epoch
+            # after both are successfull add the param
             self.train_accuracy.extend(train_epoch_history[0])
             self.train_loss.extend(train_epoch_history[1])
-
-            test_epoch_history = self._test_epoch(epoch)  # test this epoch
-            self.test_accracy.extend(test_epoch_history[0])
+            self.test_accuracy.extend(test_epoch_history[0])
             self.test_loss.extend(test_epoch_history[1])
 
     def get_train_history(self):

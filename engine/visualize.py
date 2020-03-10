@@ -39,10 +39,11 @@ class ShowData(object):
         dataiter = iter(data_loader)
         images, labels = dataiter.next()
         # img_list = random.sample(range(1, images.shape[0]), num)
-        img_list = range(1,num)
+        img_list = range(1,num+1)
         # show images
-        print('shape:', images.shape)
-        ShowData.imshow(torchvision.utils.make_grid(images[img_list]))
+        # print('shape:', images.shape)
+        # print('Input images to model')
+        ShowData.imshow(torchvision.utils.make_grid(images[img_list], nrow=5, padding=2))
         # print labels
         print(' '.join('%5s' % classes[labels[j]] for j in img_list))
 
@@ -97,7 +98,7 @@ class Classified(object):
         if self.data_loader:
             data_loader = self.data_loader
 
-        misclassified_images, ground_truth, predicted = self.get_misclassified(data_loader, number)
+        misclassified_images, ground_truth, predicted = self.get_misclassified(number)
         cols = 4
         rows = (number//cols) + (number % cols)
 
