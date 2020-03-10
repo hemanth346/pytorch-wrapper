@@ -8,12 +8,9 @@ import torchvision
 from torchvision import datasets, transforms
 from torchsummary import summary
 
-class Summary(object):
-    def summary(self, model, input_size=(3, 32, 32), device=torch.device("cuda" if torch.cuda.is_available() else "cpu")):
-        '''
-        takes care of the device for you
-        '''
-        summary(model.to_device(device), input_size=input_size)
+class summary(object):
+    def __init__(self, model, input_size=(3, 32, 32), device=torch.device("cuda" if torch.cuda.is_available() else "cpu")):
+        summary(model.to_device(device), input_size=input_size)        
 
 
 class BasicBlock(nn.Module):
