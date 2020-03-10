@@ -3,8 +3,7 @@ import torch
 from .version import __version__
 # CUDA?
 cuda = torch.cuda.is_available()
-os.environ['device'] = torch.device("cuda" if cuda else "cpu")
-
+device = torch.device("cuda" if cuda else "cpu")
 
 # from utils import UnNormalize#, validate_loss
 # from trainer import Trainer

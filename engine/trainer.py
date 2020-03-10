@@ -6,7 +6,8 @@ __all__ = ['Trainer']
 
 class Trainer(Object):
     def __init__(self, model, train_loader, test_loader, loss_fn, optimizer):
-        self.device = os.environ.get('device', 'cpu')
+        cuda = torch.cuda.is_available()
+        self.device = torch.device("cuda" if cuda else "cpu")
         self.model = model
         self.train_loader = train_loader
         self.test_loader = test_loader

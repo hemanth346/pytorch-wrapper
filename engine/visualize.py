@@ -5,9 +5,7 @@ import torch
 import torchvision
 import os
 from .data_loader import DataLoader
-from .utils import UnNormalize
-
-
+from .utils import UnNormalize, device
 
 # class UnNormalize(object):
 #     # https://discuss.pytorch.org/t/simple-way-to-inverse-transform-normalization/4821/11
@@ -52,7 +50,8 @@ class Classified(object):
     def __init__(self, model, data_loader):
         self.model = model
         self.data_loader = data_loader
-        self.device = os.environ.get('device', 'cpu')
+        cuda = torch.cuda.is_available()
+        self.device = torch.device("cuda" if cuda else "cpu")
         pass
 
     def get_misclassified(self, number=20):
