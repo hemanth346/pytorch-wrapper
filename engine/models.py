@@ -6,11 +6,13 @@ import torch.nn.functional as F
 import torch.optim as optim
 import torchvision
 from torchvision import datasets, transforms
-from torchsummary import summary
+from torchsummary import summary as lib_summary
+
 
 class summary(object):
-    def __init__(self, model, input_size=(3, 32, 32), device=torch.device("cuda" if torch.cuda.is_available() else "cpu")):
-        summary(model.to_device(device), input_size=input_size)        
+    def __init__(self, model, input_size=(3, 32, 32)):
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        lib_summary(model.to_device(device), input_size=input_size)        
 
 
 class BasicBlock(nn.Module):
