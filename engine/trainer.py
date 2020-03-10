@@ -4,7 +4,7 @@ from tqdm.auto import tqdm, trange
 
 __all__ = ['Trainer']
 
-class Trainer(Object):
+class Trainer(object):
     def __init__(self, model, train_loader, test_loader, loss_fn, optimizer):
         cuda = torch.cuda.is_available()
         self.device = torch.device("cuda" if cuda else "cpu")
