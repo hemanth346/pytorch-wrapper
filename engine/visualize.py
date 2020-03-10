@@ -5,7 +5,7 @@ import torch
 import torchvision
 import os
 from .data_loader import DataLoader
-from .utils import UnNormalize, device
+from .utils import UnNormalize
 
 # class UnNormalize(object):
 #     # https://discuss.pytorch.org/t/simple-way-to-inverse-transform-normalization/4821/11
