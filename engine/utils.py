@@ -4,9 +4,19 @@ from __future__ import print_function
 import torch.nn.functional as F
 import torch
 import torchvision
+from .data_loader import DataLoader
 
 # __all__ = ['validate_loss', 'UnNormalize']
-__all__ = ['UnNormalize']
+__all__ = ['UnNormalize', 'unnormalize']
+
+
+def unnormalize(img):
+    img = img.numpy().astype(dtype=np.float32)
+
+    for i in range(img.shape[0]):
+        img[i] = (img[i] * DataLoader.cifar10_std[i]) + DataLoader.cifar10_mean[i]
+
+    return np.transpose(img, (1, 2, 0))
 
 
 # def validate_loss(loss:str):
