@@ -1,9 +1,29 @@
 import torch
 import torchvision
 import torchvision.transforms as transforms
+import numpy as np
+import albumentations as A
+from PIL import ImageFile, Image
 
 __all__ = ['DataLoader', 'DataLoader.get_cifar10', 'DataLoader.cifar10_mean', 'DataLoader.cifar10_std', 'DataLoader.cifar10_classes']
 
+
+class AlbumentationToPytorchTransforms():
+    """
+    Helper class to convert Albumentations compose
+    into compatible for pytorch transform compose
+    """
+
+    def __init__(self, albumentation_compose=None):
+        self.transform = albumentation_compose
+
+    def __call__(self, img):
+        img = np.array(img)
+        # print(img)
+        return self.transform(image=img)['image']
+        # return Image.fromarray(augment(aug, np.array(img)))
+
+        
 class DataLoader():
     cifar10_mean = (0.491, 0.482, 0.447)
     cifar10_std = (0.247, 0.243, 0.262)
@@ -31,7 +51,7 @@ class DataLoader():
             ]
 
         if augmentations:
-            transforms_list.extend(augmentations)
+            transforms_list = [augmentations] + transforms_list
 
         train_transforms = transforms.Compose(transforms_list)
         test_transforms = transforms.Compose(transforms_list)
