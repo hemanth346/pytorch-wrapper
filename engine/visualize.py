@@ -5,7 +5,7 @@ import torch
 import torchvision
 import os
 from .data_loader import DataLoader
-from .utils import UnNormalize
+from .utils import UnNormalize, unnormalize
 
 # class UnNormalize(object):
 #     # https://discuss.pytorch.org/t/simple-way-to-inverse-transform-normalization/4821/11
@@ -107,7 +107,8 @@ class Classified(object):
         fig.suptitle(title) #super title
         unorm = 0
         if mean and std:
-            unorm = UnNormalize(mean=mean, std=std)
+            # unorm = UnNormalize(mean=mean, std=std)
+            unorm = 1
 
         for i in range((rows*cols)):
             plt.subplot(rows,cols,i+1)
@@ -115,7 +116,8 @@ class Classified(object):
             # transposing as the channels are first here and plt expects them to be last
             img = misclassified_images[i, :, :,:]
             if unorm:
-                img = unorm(misclassified_images[i, :, :,:])*155.
+                # img = unorm(misclassified_images[i, :, :,:])*155.
+                img = unnormalize(img)
             else:
                 raise ValueError('Provide Mean and Standard Deviation for displaying correct image')
             img = np.transpose(img.numpy(), (1, 2, 0))
