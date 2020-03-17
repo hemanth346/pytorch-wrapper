@@ -1,6 +1,7 @@
 from __future__ import print_function
 # from typing import Tuple, Callable
 
+import numpy as np
 import torch.nn.functional as F
 import torch
 import torchvision
