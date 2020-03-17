@@ -12,7 +12,8 @@ class Learner(object):
         self.train_loader = train_loader
         self.test_loader = test_loader
         self.trainer = Trainer(model, train_loader, test_loader, loss_fn, optimizer)
-        
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
     def show_images(self,num=5):
         ShowData.random_images(self.train_loader, num=num)
 
