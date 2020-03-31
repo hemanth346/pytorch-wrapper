@@ -30,11 +30,11 @@ class Learner(object):
         classified = self.classified
         classified.plot_misclassified(labels=DataLoader.cifar10_classes)
   
-    def get_misclassified(self):
+    def get_misclassified(self, number=5):
         if not self.classified:
             self.classified = Classified(self.model, self.test_loader)
         classified = self.classified
-        misclassified_images, ground_truth, predicted = classified.get_misclassified(number=5)
+        misclassified_images, ground_truth, predicted = classified.get_misclassified(number=number)
         return misclassified_images, ground_truth, predicted
     
     def classwise_accuracy(self):
