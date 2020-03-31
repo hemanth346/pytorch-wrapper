@@ -5,9 +5,10 @@ from tqdm.auto import tqdm, trange
 __all__ = ['Trainer']
 
 class Trainer(object):
-    def __init__(self, model, train_loader, test_loader, loss_fn, optimizer):
+    def __init__(self, model, train_loader, test_loader, loss_fn, optimizer, scheduler=False):
         cuda = torch.cuda.is_available()
         self.device = torch.device("cuda" if cuda else "cpu")
+        self.scheduler = scheduler
         self.model = model
         self.train_loader = train_loader
         self.test_loader = test_loader
@@ -17,6 +18,7 @@ class Trainer(object):
         self.train_loss = []
         self.test_accuracy = []
         self.test_loss = []
+
     def _train_epoch(self, epoch):
         loss_history = []
         accuracy_history = []
@@ -101,8 +103,23 @@ class Trainer(object):
     def run(self, epochs):
         for epoch in range(1, epochs+1):
             print(f'\nEpoch: {epoch}')
+
+            # from lr_scheduler source codes and 
+            # https://github.com/pytorch/pytorch/issues/2829#issuecomment-331800609
+            for group in self.optimizer.param_groups:
+                print(f'LR : ', group['lr'])
+
             train_epoch_history = self._train_epoch(epoch)  # train this epoch
             test_epoch_history = self._test_epoch(epoch)  # test this epoch
+
+            # added functionality for scheduler
+            if self.scheduler and not isinstance(self.scheduler, torch.optim.lr_scheduler.ReduceLROnPlateau):
+                self.scheduler.step()
+            elif self.scheduler and isinstance(self.scheduler, torch.optim.lr_scheduler.ReduceLROnPlateau):
+                # Note that step should be called after validate()
+                # https://pytorch.org/docs/stable/optim.html#torch.optim.lr_scheduler.ReduceLROnPlateau
+                self.scheduler.step(float(test_epoch_history[1][-1]))
+
             # after both are successfull add the param
             self.train_accuracy.extend(train_epoch_history[0])
             self.train_loss.extend(train_epoch_history[1])
@@ -115,8 +132,3 @@ class Trainer(object):
     def get_test_history(self):
         return (self.test_accuracy, self.test_loss)
 
-
-# class train():
-#     loss_fn, history, predict, valuate, show_results, 
-
-#     pass
