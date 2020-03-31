@@ -118,36 +118,35 @@ def GRADCAM(images, labels, learner, target_layers):
     return layers, probs, ids
 
 
+# http://jonathansoma.com/lede/data-studio/classes/small-multiples/long-explanation-of-using-plt-subplots-to-create-small-multiples/
+# https://napsterinblue.github.io/notes/python/viz/subplots/
+# https://jakevdp.github.io/PythonDataScienceHandbook/04.08-multiple-subplots.html
 def PLOT(gcam_layers, images, labels, target_layers, class_names, image_size, predicted):
-    c = len(images) + 1
-    r = len(target_layers) + 2
-    fig = plt.figure(figsize=(32, 14))
+    rows = len(images)
+    cols = len(target_layers) + 2 # label and input + layers names
+
+    fig, axes = plt.subplots(nrows=rows, ncols=cols)
+    fig = plt.figure(figsize=(5*rows, 4*cols))
     fig.subplots_adjust(hspace=0.01, wspace=0.01)
-    ax = plt.subplot(r, c, 1)
-    ax.text(0.3, -0.5, "INPUT", fontsize=14)
-    plt.axis('off')
-    for i in range(len(target_layers)):
-        target_layer = target_layers[i]
-        ax = plt.subplot(r, c, c * (i + 1) + 1)
-        ax.text(0.3, -0.5, target_layer, fontsize=14)
-        plt.axis('off')
+    ax = axes.flatten()
 
-        for j in range(len(images)):
-            img = np.uint8(255 * unnormalize(images[j].view(image_size)))
-            if i == 0:
-                ax = plt.subplot(r, c, j + 2)
-                ax.text(0, 0.2, f"pred={class_names[predicted[j][0]]}\n[actual={class_names[labels[j]]}]", fontsize=14)
-                plt.axis('off')
-                plt.subplot(r, c, c + j + 2)
-                plt.imshow(img, interpolation='bilinear')
-                plt.axis('off')
+    for image_no in range(rows):
+        col1 = image_no*cols
 
-            heatmap = 1 - gcam_layers[i][j].cpu().numpy()[0]  # reverse the color map
+        img = np.uint8(255 * unnormalize(images[image_no].view(image_size)))
+        #label
+        ax[col1].text(0, 0.2, f"pred={class_names[predicted[image_no][0]]}\n[actual={class_names[labels[image_no]]}]", fontsize=14)
+        # 'input_image'
+
+        for layer_no in range(len(target_layers)):
+            heatmap = 1 - gcam_layers[layer_no][image_no].cpu().numpy()[0]  # reverse the color map
             heatmap = np.uint8(255 * heatmap)
             heatmap = cv2.applyColorMap(heatmap, cv2.COLORMAP_JET)
             superimposed_img = cv2.resize(cv2.addWeighted(img, 0.5, heatmap, 0.5, 0), (128, 128))
-            plt.subplot(r, c, (i + 2) * c + j + 2)
-            plt.imshow(superimposed_img, interpolation='bilinear')
+            ax[col1 + 2 +layer_no].imshow(superimposed_img, interpolation='bilinear')
+        # display after resizing
+        img = cv2.resize(img, (128, 128))
+        ax[col1+1].imshow(img, interpolation='bilinear')
 
-            plt.axis('off')
     plt.show()
+
