@@ -7,11 +7,11 @@ from .visualize import ShowData, Classified
 
 
 class Learner(object):
-    def __init__(self, model, train_loader, test_loader, loss_fn, optimizer):
+    def __init__(self, model, train_loader, test_loader, loss_fn, optimizer, scheduler=None):
         self.model = model
         self.train_loader = train_loader
         self.test_loader = test_loader
-        self.trainer = Trainer(model, train_loader, test_loader, loss_fn, optimizer)
+        self.trainer = Trainer(model, train_loader, test_loader, loss_fn, optimizer, scheduler)
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     def show_images(self,num=5):
@@ -31,5 +31,3 @@ class Learner(object):
     def classwise_accuracy(self):
         classified = Classified(self.model, self.test_loader)
         classified.classwise_accuracy()
-
-
