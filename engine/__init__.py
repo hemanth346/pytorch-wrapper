@@ -12,3 +12,6 @@ device = torch.device("cuda" if cuda else "cpu")
 # from visualize import ShowData, Classified
 # from data_loader import DataLoader
 # from models import Net, BasicBlock, Bottleneck, ResNet
+
+
+# TODO : gradcam plots, scheduler steps (reduceLRonPlateau), LR scheduler

@@ -1,6 +1,3 @@
-# https://github.com/kazuto1011/grad-cam-pytorch/blob/fd10ff7fc85ae064938531235a5dd3889ca46fed/grad_cam.py#L17
-# https://github.com/abhinavdayal/EVA4/edit/master/S9/EVA4/eva4gradcam.py
-
 from torch.nn import functional as F
 import cv2
 import torch
@@ -8,10 +5,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 from .utils import unnormalize
 
+# https://github.com/kazuto1011/grad-cam-pytorch/blob/fd10ff7fc85ae064938531235a5dd3889ca46fed/grad_cam.py
+
 
 class GradCAM:
     """ Class for extracting activations and
-    registering gradients from targetted intermediate layers
+    registering gradients from targeted intermediate layers
     target_layers = list of convolution layer index as shown in summary
     """
 
@@ -121,12 +120,25 @@ def GRADCAM(images, labels, learner, target_layers):
 # http://jonathansoma.com/lede/data-studio/classes/small-multiples/long-explanation-of-using-plt-subplots-to-create-small-multiples/
 # https://napsterinblue.github.io/notes/python/viz/subplots/
 # https://jakevdp.github.io/PythonDataScienceHandbook/04.08-multiple-subplots.html
-def PLOT(gcam_layers, images, labels, target_layers, class_names, image_size, predicted):
+
+def PLOT(gcam_layers, images, labels, target_layers, class_names, image_size, predicted, output_size=(128, 128)):
+    # https://stackoverflow.com/a/53721862/7445772
+    # https://matplotlib.org/tutorials/introductory/customizing.html
+    rc = {"axes.spines.left" : False,
+      "axes.spines.right" : False,
+      "axes.spines.bottom" : False,
+      "axes.spines.top" : False,
+      "axes.grid" : False,
+      "xtick.bottom" : False,
+      "xtick.labelbottom" : False,
+      "ytick.labelleft" : False,
+      "ytick.left" : False}
+    plt.rcParams.update(rc)
+
     rows = len(images)
     cols = len(target_layers) + 2 # label and input + layers names
 
-    fig, axes = plt.subplots(nrows=rows, ncols=cols)
-    fig = plt.figure(figsize=(5*rows, 4*cols))
+    fig, axes = plt.subplots(nrows=rows, ncols=cols, figsize=(5*rows, 4*cols))
     fig.subplots_adjust(hspace=0.01, wspace=0.01)
     ax = axes.flatten()
 
@@ -135,18 +147,17 @@ def PLOT(gcam_layers, images, labels, target_layers, class_names, image_size, pr
 
         img = np.uint8(255 * unnormalize(images[image_no].view(image_size)))
         #label
-        ax[col1].text(0, 0.2, f"pred={class_names[predicted[image_no][0]]}\n[actual={class_names[labels[image_no]]}]", fontsize=14)
+        ax[col1].text(0, 0.2, f"pred={class_names[predicted[image_no][0]]}\n[actual={class_names[labels[image_no]]}]", fontsize=27)
         # 'input_image'
 
         for layer_no in range(len(target_layers)):
             heatmap = 1 - gcam_layers[layer_no][image_no].cpu().numpy()[0]  # reverse the color map
             heatmap = np.uint8(255 * heatmap)
             heatmap = cv2.applyColorMap(heatmap, cv2.COLORMAP_JET)
-            superimposed_img = cv2.resize(cv2.addWeighted(img, 0.5, heatmap, 0.5, 0), (128, 128))
+            superimposed_img = cv2.resize(cv2.addWeighted(img, 0.5, heatmap, 0.5, 0), output_size)
             ax[col1 + 2 +layer_no].imshow(superimposed_img, interpolation='bilinear')
         # display after resizing
-        img = cv2.resize(img, (128, 128))
+        img = cv2.resize(img, output_size)
         ax[col1+1].imshow(img, interpolation='bilinear')
 
     plt.show()
-

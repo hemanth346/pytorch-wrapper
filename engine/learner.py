@@ -1,9 +1,9 @@
 import os
 import torch
-from .data_loader import DataLoader
+from .data_loader import CIFAR10Data
 from .trainer import Trainer
 from .plots import plot_history
-from .visualize import ShowData, Classified
+from .visualize import ShowData, Validator
 
 
 class Learner(object):
@@ -24,21 +24,21 @@ class Learner(object):
     def show_history(self):
         plot_history(self.trainer.get_train_history(), self.trainer.get_test_history())
 
-    def plot_misclassified(self):
+    def plot_misclassified(self, number=20):
         if not self.classified:
-            self.classified = Classified(self.model, self.test_loader)
+            self.classified = Validator(self.model, self.test_loader)
         classified = self.classified
-        classified.plot_misclassified(labels=DataLoader.cifar10_classes)
+        classified.plot_misclassified(number=number, labels=CIFAR10Data.classes)
   
     def get_misclassified(self, number=5):
         if not self.classified:
-            self.classified = Classified(self.model, self.test_loader)
+            self.classified = Validator(self.model, self.test_loader)
         classified = self.classified
         misclassified_images, ground_truth, predicted = classified.get_misclassified(number=number)
         return misclassified_images, ground_truth, predicted
     
     def classwise_accuracy(self):
         if not self.classified:
-            self.classified = Classified(self.model, self.test_loader)
+            self.classified = Validator(self.model, self.test_loader)
         classified = self.classified
         classified.classwise_accuracy()
